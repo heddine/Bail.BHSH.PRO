@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Charges &amp; Travaux — BHSH IMMO</title>
+<meta name="theme-color" content="#1b5e20">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#2e7d32;--green2:#1b5e20;
+  --bg:#f1f8e9;--card:#ffffff;
+  --text:#1a2a1a;--muted:#558b2f;
+  --border:#c5e1a5;--radius:14px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#e8f5e9;color:var(--text);min-height:100vh}
+.app{max-width:800px;margin:0 auto;min-height:100vh;background:var(--bg);display:flex;flex-direction:column}
+
+.header{background:linear-gradient(135deg,#1b5e20,#2e7d32);padding:16px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(27,94,32,.25)}
+.header-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.header-icon{width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.header-title{font-size:16px;font-weight:800;color:#fff}
+.header-sub{font-size:9px;color:rgba(255,255,255,.6);letter-spacing:1.5px;text-transform:uppercase}
+.header-total{margin-left:auto;background:rgba(255,255,255,.2);border-radius:20px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff}
+
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;border:none;border-radius:20px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}
+.tab.active{background:#fff;color:#1b5e20;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.tab:not(.active){background:rgba(255,255,255,.2);color:rgba(255,255,255,.8)}
+
+.content{padding:14px 16px 100px;flex:1}
+
+.year-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.year-sel{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:700;color:var(--text);outline:none}
+.add-btn{background:linear-gradient(135deg,#2e7d32,#1b5e20);border:none;border-radius:10px;padding:10px 18px;color:#fff;font-size:13px;font-weight:700;cursor:pointer}
+
+.summary-card{background:linear-gradient(135deg,#1b5e20,#2e7d32);border-radius:14px;padding:16px;margin-bottom:14px;color:#fff}
+.sum-title{font-size:10px;font-weight:700;opacity:.7;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.sum-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.15);font-size:12px}
+.sum-total{display:flex;justify-content:space-between;padding:10px 0 0;font-size:16px;font-weight:900}
+
+.cat-section{margin-bottom:12px}
+.cat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#fff;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;user-select:none;margin-bottom:2px}
+.cat-left{display:flex;align-items:center;gap:10px}
+.cat-name{font-size:13px;font-weight:700;color:var(--text)}
+.cat-count{font-size:10px;color:var(--muted)}
+.cat-total{font-size:14px;font-weight:800;color:#1b5e20}
+.cat-body{background:#fafff8;border:1.5px solid var(--border);border-radius:0 0 12px 12px;overflow:hidden;margin-top:-2px}
+
+.dep-item{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+.dep-item:last-child{border-bottom:none}
+.dep-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer}
+.dep-no-photo{width:60px;height:60px;border-radius:8px;background:#f0f4f0;border:1.5px dashed var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);cursor:pointer;text-align:center;font-weight:600;line-height:1.3}
+.dep-info{flex:1;min-width:0}
+.dep-desc{font-size:13px;font-weight:700;margin-bottom:3px}
+.dep-meta{font-size:11px;color:var(--muted);margin-bottom:4px}
+.dep-amount{font-size:15px;font-weight:900;color:#1b5e20}
+.dep-case{font-size:9px;background:#e8f5e9;color:#1b5e20;border-radius:8px;padding:2px 7px;font-weight:700;margin-left:6px}
+.dep-acts{display:flex;gap:6px;margin-top:6px}
+.dep-btn{border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer}
+.btn-edit{background:#fff3e0;color:#cc4400;border:1px solid #ffcc80}
+.btn-del{background:#fdecea;color:#c62828;border:1px solid #ef9a9a}
+.btn-photo{background:#e8f5e9;color:#1b5e20;border:1px solid #a5d6a7}
+
+.empty{text-align:center;padding:40px 16px;color:var(--muted)}
+.empty-ico{font-size:48px;margin-bottom:14px}
+.empty p{font-size:13px;line-height:1.7}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:800px;margin:0 auto;background:#fff;border-top:2px solid #2e7d32;padding:10px 16px;display:flex;gap:10px;box-shadow:0 -4px 20px rgba(46,125,50,.15);z-index:100}
+.btn-main{flex:2;background:linear-gradient(135deg,#2e7d32,#1b5e20);border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;color:#fff;cursor:pointer}
+.btn-sec{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:13px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;overflow-y:auto;backdrop-filter:blur(4px)}
+.modal-bg.open{display:block}
+.modal-inner{max-width:800px;margin:20px auto;background:var(--bg);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-hdr{background:linear-gradient(135deg,#1b5e20,#2e7d32);padding:16px 18px;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:800;color:#fff}
+.modal-sub{font-size:9px;color:rgba(255,255,255,.6);letter-spacing:1.5px;text-transform:uppercase}
+.modal-close{background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.modal-body{padding:16px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--text);outline:none}
+.field textarea{min-height:65px;resize:vertical}
+.field input:focus,.field select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(46,125,50,.15)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.photos-zone{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:12px}
+.photos-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.photos-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;min-height:0}
+.photo-thumb-wrap{position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;border:1.5px solid var(--border)}
+.photo-thumb-wrap img{width:100%;height:100%;object-fit:cover;cursor:pointer}
+.photo-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer}
+.photos-btns{display:flex;gap:8px}
+.photo-add-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer}
+.btn-cam{background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff}
+.btn-gal{background:#fff3e0;color:#cc4400;border:1.5px solid #ffcc80!important}
+
+.save-btn{width:100%;background:linear-gradient(135deg,#2e7d32,#1b5e20);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;color:#fff;cursor:pointer;margin-top:4px;box-shadow:0 4px 15px rgba(46,125,50,.35)}
+
+/* PHOTO FULL */
+.photo-full{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:999;align-items:center;justify-content:center}
+.photo-full.open{display:flex}
+.photo-full img{max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px}
+.pf-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;padding:11px 22px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25);white-space:nowrap;transition:opacity .4s}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-icon">&#x1F3D7;</div>
+    <div>
+      <div class="header-title">Charges &amp; Travaux</div>
+      <div class="header-sub">BHSH IMMO — Déclaration 2044</div>
+    </div>
+    <div class="header-total" id="headerTotal">0,00 &#x20AC;</div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('all',this)">Tout</button>
+    <button class="tab" onclick="setTab('travaux',this)">Travaux</button>
+    <button class="tab" onclick="setTab('gestion',this)">Gestion</button>
+    <button class="tab" onclick="setTab('assurance',this)">Assurance</button>
+    <button class="tab" onclick="setTab('taxes',this)">Taxes</button>
+    <button class="tab" onclick="setTab('charges',this)">Copropriété</button>
+    <button class="tab" onclick="setTab('emprunt',this)">Emprunt</button>
+    <button class="tab" onclick="setTab('autre',this)">Autre</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="year-bar">
+    <select class="year-sel" id="anneeFilter" onchange="renderAll()">
+      <option value="2025">Année 2025</option>
+      <option value="2024">Année 2024</option>
+      <option value="2023">Année 2023</option>
+      <option value="2026">Année 2026</option>
+    </select>
+    <button class="add-btn" onclick="openAdd()">+ Ajouter</button>
+  </div>
+  <div id="summaryCard" style="display:none" class="summary-card">
+    <div class="sum-title">Récapitulatif fiscal</div>
+    <div id="summaryRows"></div>
+    <div class="sum-total"><span>Total déductible</span><span id="summaryTotal">0 &#x20AC;</span></div>
+  </div>
+  <div id="catList"></div>
+</div>
+
+<div class="bottom-nav">
+  <button class="btn-main" onclick="exportPDF()">Exporter PDF 2044</button>
+  <button class="btn-sec" onclick="doSave()">Sauvegarder</button>
+</div>
+
+</div>
+
+<!-- MODAL AJOUT -->
+<div class="modal-bg" id="addModal">
+  <div class="modal-inner">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="modalTitle">Ajouter une dépense</div>
+        <div class="modal-sub">CHARGES &amp; TRAVAUX 2044</div>
+      </div>
+      <button class="modal-close" onclick="closeAdd()">&#x2715; Fermer</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Catégorie</label>
+        <select id="fCat" onchange="updateCase()">
+          <option value="travaux_rep">Réparations &amp; entretien (L.225)</option>
+          <option value="travaux_amel">Travaux amélioration (L.226)</option>
+          <option value="travaux_const">Construction/reconstruction (L.227)</option>
+          <option value="gestion">Frais de gestion agence (L.221)</option>
+          <option value="procedure">Frais de procédure (L.222)</option>
+          <option value="garde">Frais de garde/surveillance (L.223)</option>
+          <option value="assurance">Assurance PNO (L.224)</option>
+          <option value="taxe_fonc">Taxe foncière (L.230)</option>
+          <option value="taxes_autres">Autres taxes (L.231)</option>
+          <option value="charges_rec">Charges copro non récupérées (L.240)</option>
+          <option value="charges_non_rec">Charges copro non récupérables (L.241)</option>
+          <option value="interets">Intérêts d'emprunt (L.250)</option>
+          <option value="frais_emprunt">Frais d'emprunt (L.251)</option>
+          <option value="borloo">Déduction Borloo/Besson (L.260)</option>
+          <option value="autre">Autre déduction (L.261)</option>
+        </select>
+      </div>
+      <div class="field"><label>Description</label><input type="text" id="fDesc" placeholder="ex: Remplacement chauffe-eau, Peinture..."></div>
+      <div class="field"><label>Prestataire / Fournisseur</label><input type="text" id="fPresta" placeholder="ex: Plomberie Martin..."></div>
+      <div class="grid2">
+        <div class="field"><label>Montant TTC (&#x20AC;)</label><input type="number" id="fMontant" placeholder="0.00" step="0.01"></div>
+        <div class="field"><label>Date facture</label><input type="date" id="fDate"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>N&#xB0; Facture</label><input type="text" id="fNumFact" placeholder="FAC-2025-001"></div>
+        <div class="field"><label>Bien concerné</label><input type="text" id="fBien" placeholder="ex: Appt RDC"></div>
+      </div>
+      <div class="field"><label>Case 2044</label><input type="text" id="fCase" readonly style="background:#f0f0f0;color:#666"></div>
+      <div class="field"><label>Notes</label><textarea id="fNotes" placeholder="Détails..."></textarea></div>
+
+      <div class="photos-zone">
+        <div class="photos-title">Photos de factures / justificatifs</div>
+        <div class="photos-grid" id="modalPhotosGrid"></div>
+        <div class="photos-btns">
+          <label class="photo-add-btn btn-cam">
+            Prendre photo
+            <input type="file" accept="image/*" capture="environment" style="display:none" onchange="addPhoto(this)">
+          </label>
+          <label class="photo-add-btn btn-gal">
+            Galerie / PDF
+            <input type="file" accept="image/*,application/pdf" multiple style="display:none" onchange="addPhoto(this)">
+          </label>
+        </div>
+        <div style="font-size:10px;color:#aaa;margin-top:8px;font-style:italic">Conservez vos justificatifs 10 ans (contrôle fiscal)</div>
+      </div>
+
+      <button class="save-btn" onclick="saveDep()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO FULLSCREEN -->
+<div class="photo-full" id="photoFull" onclick="closePhotoFull()">
+  <button class="pf-close">&#x2715;</button>
+  <img id="photoFullImg" src="" alt="">
+</div>
+
+<script>
+var STORAGE_KEY = 'bhsh_charges_travaux';
+var depenses = [];
+var currentTab = 'all';
+var editingId = null;
+var modalPhotos = [];
+
+var CAT_META = {
+  travaux_rep:     { label:'Rparations & entretien',    case:'L.225', tab:'travaux'  },
+  travaux_amel:    { label:'Travaux amlioration',        case:'L.226', tab:'travaux'  },
+  travaux_const:   { label:'Construction/reconstruction', case:'L.227', tab:'travaux'  },
+  gestion:         { label:'Frais de gestion',            case:'L.221', tab:'gestion'  },
+  procedure:       { label:'Frais de procdure',          case:'L.222', tab:'gestion'  },
+  garde:           { label:'Garde/surveillance',           case:'L.223', tab:'gestion'  },
+  assurance:       { label:'Assurance PNO',               case:'L.224', tab:'assurance'},
+  taxe_fonc:       { label:'Taxe foncire',               case:'L.230', tab:'taxes'    },
+  taxes_autres:    { label:'Autres taxes',                case:'L.231', tab:'taxes'    },
+  charges_rec:     { label:'Charges copro non rcupres',case:'L.240', tab:'charges'  },
+  charges_non_rec: { label:'Charges copro non rcup.',    case:'L.241', tab:'charges'  },
+  interets:        { label:"Intrts d'emprunt",          case:'L.250', tab:'emprunt'  },
+  frais_emprunt:   { label:"Frais d'emprunt",             case:'L.251', tab:'emprunt'  },
+  borloo:          { label:'Dduction Borloo/Besson',     case:'L.260', tab:'autre'    },
+  autre:           { label:'Autre dduction',             case:'L.261', tab:'autre'    }
+};
+
+function load() {
+  try { depenses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { depenses = []; }
+}
+
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(depenses)); } catch(e) {
+    showToast('Stockage plein  supprimez des photos');
+  }
+}
+
+function getAnnee() {
+  return document.getElementById('anneeFilter').value || '2025';
+}
+
+function fmtEur(n) {
+  return parseFloat(n||0).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' \u20AC';
+}
+
+function fmtDate(s) {
+  if (!s) return '';
+  try { return new Date(s).toLocaleDateString('fr-FR'); } catch(e) { return s; }
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { t.style.opacity='0'; setTimeout(function(){t.remove();},400); }, 2200);
+}
+
+function setTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  renderAll();
+}
+
+function renderAll() {
+  var annee = getAnnee();
+  var all = depenses.filter(function(d) { return (d.date||'').substring(0,4) === annee; });
+  var filtered = currentTab === 'all' ? all : all.filter(function(d) {
+    return (CAT_META[d.cat]||CAT_META.autre).tab === currentTab;
+  });
+
+  var total = all.reduce(function(s,d){return s+(parseFloat(d.montant)||0);},0);
+  document.getElementById('headerTotal').textContent = fmtEur(total);
+
+  // Summary
+  var sc = document.getElementById('summaryCard');
+  if (currentTab === 'all' && filtered.length > 0) {
+    sc.style.display = 'block';
+    var byCat = {};
+    filtered.forEach(function(d) {
+      var m = CAT_META[d.cat] || CAT_META.autre;
+      if (!byCat[m.case]) byCat[m.case] = { label: m.label, total: 0 };
+      byCat[m.case].total += parseFloat(d.montant)||0;
+    });
+    var rowsHtml = '';
+    Object.keys(byCat).forEach(function(c) {
+      rowsHtml += '<div class="sum-row"><span>' + esc(byCat[c].label) + '</span><span style="font-weight:700">' + fmtEur(byCat[c].total) + '</span></div>';
+    });
+    document.getElementById('summaryRows').innerHTML = rowsHtml;
+    document.getElementById('summaryTotal').textContent = fmtEur(filtered.reduce(function(s,d){return s+(parseFloat(d.montant)||0);},0));
+  } else {
+    sc.style.display = 'none';
+  }
+
+  // Group by cat
+  var groups = {};
+  filtered.forEach(function(d) {
+    if (!groups[d.cat]) groups[d.cat] = [];
+    groups[d.cat].push(d);
+  });
+
+  var container = document.getElementById('catList');
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty"><div class="empty-ico">&#x1F5C2;</div><p>Aucune dpense pour ' + annee + '.<br>Appuyez sur <strong>+ Ajouter</strong> pour saisir vos charges et travaux.</p></div>';
+    return;
+  }
+
+  var html = '';
+  Object.keys(groups).forEach(function(cat) {
+    var items = groups[cat];
+    var meta = CAT_META[cat] || CAT_META.autre;
+    var catTotal = items.reduce(function(s,d){return s+(parseFloat(d.montant)||0);},0);
+    html += '<div class="cat-section">';
+    html += '<div class="cat-header">';
+    html += '<div class="cat-left"><div>';
+    html += '<div class="cat-name">' + esc(meta.label) + '</div>';
+    html += '<div class="cat-count">' + items.length + ' dpense' + (items.length>1?'s':'') + '  ' + meta.case + '</div>';
+    html += '</div></div>';
+    html += '<span class="cat-total">' + fmtEur(catTotal) + '</span>';
+    html += '</div>';
+    html += '<div class="cat-body">';
+    items.sort(function(a,b){return b.date>a.date?1:-1;}).forEach(function(d) {
+      html += renderItem(d);
+    });
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function renderItem(d) {
+  var meta = CAT_META[d.cat] || CAT_META.autre;
+  var firstPhoto = d.photos && d.photos.length > 0 ? d.photos[0] : null;
+  var photoCount = d.photos ? d.photos.length : 0;
+  var html = '<div class="dep-item">';
+
+  if (firstPhoto) {
+    html += '<img class="dep-thumb" src="' + firstPhoto + '" onclick="openPhotoFull(\'' + d.id + '\')">';
+  } else {
+    html += '<div class="dep-no-photo" onclick="addPhotoToDep(' + d.id + ')">+ Photo</div>';
+  }
+
+  html += '<div class="dep-info">';
+  html += '<div class="dep-desc">' + esc(d.desc||'') + '</div>';
+
+  var meta2 = [];
+  if (d.date) meta2.push(fmtDate(d.date));
+  if (d.presta) meta2.push(esc(d.presta));
+  if (d.bien) meta2.push(esc(d.bien));
+  if (d.numfact) meta2.push('N' + esc(d.numfact));
+  if (photoCount > 0) meta2.push(photoCount + ' justif.');
+  html += '<div class="dep-meta">' + meta2.join('  ') + '</div>';
+  html += '<div><span class="dep-amount">' + fmtEur(parseFloat(d.montant)||0) + '</span><span class="dep-case">' + meta.case + '</span></div>';
+  if (d.notes) html += '<div style="font-size:11px;color:#888;margin-top:3px;font-style:italic">' + esc(d.notes) + '</div>';
+  html += '<div class="dep-acts">';
+  html += '<button class="dep-btn btn-edit" onclick="editDep(' + d.id + ')">Modifier</button>';
+  html += '<button class="dep-btn btn-photo" onclick="addPhotoToDep(' + d.id + ')">+ Photo</button>';
+  html += '<button class="dep-btn btn-del" onclick="deleteDep(' + d.id + ')">Supprimer</button>';
+  html += '</div></div></div>';
+  return html;
+}
+
+// MODAL
+function openAdd(catDefault) {
+  editingId = null;
+  modalPhotos = [];
+  document.getElementById('modalTitle').textContent = 'Ajouter une dpense';
+  document.getElementById('fCat').value = catDefault || 'travaux_rep';
+  document.getElementById('fDesc').value = '';
+  document.getElementById('fPresta').value = '';
+  document.getElementById('fMontant').value = '';
+  document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('fNumFact').value = '';
+  document.getElementById('fBien').value = '';
+  document.getElementById('fNotes').value = '';
+  updateCase();
+  renderModalPhotos();
+  document.getElementById('addModal').classList.add('open');
+}
+
+function editDep(id) {
+  var d = null;
+  for (var i=0;i<depenses.length;i++) { if (depenses[i].id===id){d=depenses[i];break;} }
+  if (!d) return;
+  editingId = id;
+  modalPhotos = d.photos ? d.photos.slice() : [];
+  document.getElementById('modalTitle').textContent = 'Modifier la dpense';
+  document.getElementById('fCat').value = d.cat || 'travaux_rep';
+  document.getElementById('fDesc').value = d.desc || '';
+  document.getElementById('fPresta').value = d.presta || '';
+  document.getElementById('fMontant').value = d.montant || '';
+  document.getElementById('fDate').value = d.date || '';
+  document.getElementById('fNumFact').value = d.numfact || '';
+  document.getElementById('fBien').value = d.bien || '';
+  document.getElementById('fNotes').value = d.notes || '';
+  updateCase();
+  renderModalPhotos();
+  document.getElementById('addModal').classList.add('open');
+}
+
+function closeAdd() {
+  document.getElementById('addModal').classList.remove('open');
+  editingId = null;
+  modalPhotos = [];
+}
+
+function updateCase() {
+  var cat = document.getElementById('fCat').value;
+  var meta = CAT_META[cat] || CAT_META.autre;
+  document.getElementById('fCase').value = meta.case + '  ' + meta.label;
+}
+
+function saveDep() {
+  var montant = parseFloat(document.getElementById('fMontant').value);
+  if (!montant || montant <= 0) { alert('Saisissez un montant valide'); return; }
+  var desc = document.getElementById('fDesc').value.trim();
+  if (!desc) { alert('Saisissez une description'); return; }
+  var dep = {
+    id:      editingId || Date.now(),
+    cat:     document.getElementById('fCat').value,
+    desc:    desc,
+    presta:  document.getElementById('fPresta').value.trim(),
+    montant: montant.toFixed(2),
+    date:    document.getElementById('fDate').value,
+    numfact: document.getElementById('fNumFact').value.trim(),
+    bien:    document.getElementById('fBien').value.trim(),
+    notes:   document.getElementById('fNotes').value.trim(),
+    photos:  modalPhotos.slice()
+  };
+  if (editingId) {
+    for (var i=0;i<depenses.length;i++) { if (depenses[i].id===editingId){depenses[i]=dep;break;} }
+  } else {
+    depenses.push(dep);
+  }
+  save();
+  closeAdd();
+  renderAll();
+  showToast(editingId ? 'Dpense modifie' : 'Dpense ajoute');
+}
+
+function deleteDep(id) {
+  if (!confirm('Supprimer cette dpense ?')) return;
+  depenses = depenses.filter(function(x){return x.id!==id;});
+  save();
+  renderAll();
+  showToast('Dpense supprime');
+}
+
+// PHOTOS
+function addPhoto(input) {
+  var files = Array.prototype.slice.call(input.files||[]);
+  if (!files.length) return;
+  var pending = files.length;
+  files.forEach(function(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      modalPhotos.push(e.target.result);
+      pending--;
+      if (pending === 0) renderModalPhotos();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function renderModalPhotos() {
+  var grid = document.getElementById('modalPhotosGrid');
+  if (!grid) return;
+  var html = '';
+  for (var i=0;i<modalPhotos.length;i++) {
+    html += '<div class="photo-thumb-wrap"><img src="' + modalPhotos[i] + '" onclick="openPhotoFullSrc(this.src)"><button class="photo-del" onclick="removePhoto(' + i + ')">&#x2715;</button></div>';
+  }
+  grid.innerHTML = html;
+}
+
+function removePhoto(i) {
+  modalPhotos.splice(i,1);
+  renderModalPhotos();
+}
+
+var _addPhotoDepId = null;
+function addPhotoToDep(id) {
+  _addPhotoDepId = id;
+  var inp = document.createElement('input');
+  inp.type='file'; inp.accept='image/*,application/pdf'; inp.multiple=true;
+  inp.onchange = function() {
+    var files = Array.prototype.slice.call(inp.files||[]);
+    var d = null;
+    for(var i=0;i<depenses.length;i++){if(depenses[i].id===_addPhotoDepId){d=depenses[i];break;}}
+    if (!d) return;
+    if (!d.photos) d.photos=[];
+    var pending = files.length;
+    files.forEach(function(file){
+      var reader=new FileReader();
+      reader.onload=function(e){
+        d.photos.push(e.target.result);
+        pending--;
+        if(pending===0){save();renderAll();showToast('Photo ajoute');}
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  inp.click();
+}
+
+// Store photos by dep id for fullscreen
+function openPhotoFull(depId) {
+  var d = null;
+  for(var i=0;i<depenses.length;i++){if(depenses[i].id==depId){d=depenses[i];break;}}
+  if (!d || !d.photos || !d.photos.length) return;
+  openPhotoFullSrc(d.photos[0]);
+}
+
+function openPhotoFullSrc(src) {
+  document.getElementById('photoFullImg').src = src;
+  document.getElementById('photoFull').classList.add('open');
+}
+
+function closePhotoFull() {
+  document.getElementById('photoFull').classList.remove('open');
+  document.getElementById('photoFullImg').src = '';
+}
+
+function doSave() {
+  var annee = getAnnee();
+  var count = depenses.filter(function(d){return (d.date||'').substring(0,4)===annee;}).length;
+  save();
+  showToast('Sauvegard  ' + count + ' dpenses ' + annee);
+}
+
+function exportPDF() {
+  var annee = getAnnee();
+  var items = depenses.filter(function(d){return (d.date||'').substring(0,4)===annee;});
+  if (!items.length) { alert('Aucune dpense pour ' + annee); return; }
+
+  try {
+    var PW=595.28, PH=841.89, M=40, CW=PW-M*2;
+    var pages=[]; var curPage={streams:[],width:PW,height:PH}; pages.push(curPage);
+    var y=40;
+
+    function esc2(s){return (s||'').replace(/[()\\\n]/g,function(c){return c==='\n'?' ':'\\'+c;}).replace(/[^\x20-\x7E]/g,'');}
+    function newPage(){curPage={streams:[],width:PW,height:PH};pages.push(curPage);y=40;}
+    function chk(h){if(y+h>PH-60)newPage();}
+    function txt(s,x,yy,sz,bold,r,g,b){
+      sz=sz||9;bold=bold||false;r=r||0;g=g||0;b=b||0;
+      var f=bold?'/F2':'/F1';
+      curPage.streams.push('BT '+f+' '+sz+' Tf '+r.toFixed(2)+' '+g.toFixed(2)+' '+b.toFixed(2)+' rg '+x.toFixed(2)+' '+(PH-yy).toFixed(2)+' Td ('+esc2(s)+') Tj ET');
+    }
+    function ln(x1,y1,x2,y2){curPage.streams.push('0.85 0.85 0.85 RG 0.5 w '+x1.toFixed(2)+' '+(PH-y1).toFixed(2)+' m '+x2.toFixed(2)+' '+(PH-y2).toFixed(2)+' l S');}
+    function fillRect(x,yy,w,h,r,g,b){curPage.streams.push(r.toFixed(2)+' '+g.toFixed(2)+' '+b.toFixed(2)+' rg '+x.toFixed(2)+' '+(PH-yy-h).toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re f');}
+
+    // En-tte
+    fillRect(M,y,CW,56,0.11,0.37,0.13);
+    txt('CHARGES & TRAVAUX - DECLARATION 2044 - '+annee,M+10,y+20,13,true,1,1,1);
+    txt('BHSH IMMO  -  '+new Date().toLocaleDateString('fr-FR'),M+10,y+38,9,false,0.8,1,0.8);
+    var grandTotal=items.reduce(function(s,d){return s+(parseFloat(d.montant)||0);},0);
+    txt('Total : '+fmtEur(grandTotal),M+CW-120,y+38,10,true,1,1,0.6);
+    y+=68;
+
+    var groups={};
+    items.forEach(function(d){if(!groups[d.cat])groups[d.cat]=[];groups[d.cat].push(d);});
+
+    Object.keys(groups).forEach(function(cat){
+      var deps=groups[cat];
+      var meta=CAT_META[cat]||CAT_META.autre;
+      var catTotal=deps.reduce(function(s,d){return s+(parseFloat(d.montant)||0);},0);
+      chk(30);
+      fillRect(M,y,CW,18,0.22,0.22,0.25);
+      txt(meta.label+' - '+meta.case,M+8,y+13,9,true,1,1,1);
+      txt(fmtEur(catTotal),M+CW-80,y+13,9,true,0.8,1,0.6);
+      y+=24;
+      deps.sort(function(a,b){return b.date>a.date?1:-1;}).forEach(function(d){
+        chk(26);
+        txt(d.desc||'',M+8,y,8,true,0.1,0.1,0.1);
+        txt(fmtEur(parseFloat(d.montant)||0),M+CW-8,y,9,true,0.78,0.27,0.1);
+        y+=13;
+        var m2=[];
+        if(d.date)m2.push(fmtDate(d.date));
+        if(d.presta)m2.push(d.presta);
+        if(d.bien)m2.push(d.bien);
+        if(d.numfact)m2.push('N'+d.numfact);
+        if(d.photos&&d.photos.length)m2.push(d.photos.length+' justif.');
+        if(m2.length){txt(m2.join(' - '),M+8,y,7,false,0.5,0.5,0.5);y+=11;}
+        ln(M,y,M+CW,y);y+=8;
+      });
+      txt('Sous-total '+meta.case,M+CW-160,y,8,true,0.11,0.37,0.13);
+      txt(fmtEur(catTotal),M+CW-8,y,9,true,0.11,0.37,0.13);
+      y+=20;
+    });
+
+    chk(36);
+    fillRect(M,y,CW,24,0.11,0.37,0.13);
+    txt('TOTAL CHARGES DEDUCTIBLES',M+8,y+16,11,true,1,1,1);
+    txt(fmtEur(grandTotal),M+CW-8,y+16,11,true,1,1,0.6);
+    y+=36;
+    txt('Document indicatif - a reporter sur votre declaration 2044 - consultez impots.gouv.fr',M,y,7,false,0.6,0.6,0.6);
+
+    // Build PDF
+    var out='%PDF-1.4\n%\xFF\xFF\xFF\xFF\n';
+    var offsets=[];
+    function addObj(c){offsets.push(out.length);var n=offsets.length;out+=n+' 0 obj\n'+c+'\nendobj\n';return n;}
+    var f1=addObj('<</Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding>>');
+    var f2=addObj('<</Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding>>');
+    var cRefs=pages.map(function(p){var s=p.streams.join('\n');return addObj('<</Length '+s.length+'>>\nstream\n'+s+'\nendstream');});
+    var pNum=offsets.length+1+pages.length;
+    var pRefs=pages.map(function(p,i){return addObj('<</Type /Page /Parent '+pNum+' 0 R /MediaBox [0 0 '+p.width+' '+p.height+'] /Contents '+cRefs[i]+' 0 R /Resources <</Font <</F1 '+f1+' 0 R /F2 '+f2+' 0 R>>>>>>');});
+    var pagesObj=addObj('<</Type /Pages /Kids ['+pRefs.map(function(r){return r+' 0 R';}).join(' ')+'] /Count '+pages.length+'>>');
+    var catObj=addObj('<</Type /Catalog /Pages '+pagesObj+' 0 R>>');
+    var xp=out.length;
+    out+='xref\n0 '+(offsets.length+1)+'\n0000000000 65535 f \n';
+    offsets.forEach(function(o){out+=String(o).padStart(10,'0')+' 00000 n \n';});
+    out+='trailer\n<</Size '+(offsets.length+1)+' /Root '+catObj+' 0 R>>\nstartxref\n'+xp+'\n%%EOF';
+
+    var bytes=new Uint8Array(out.length);
+    for(var i=0;i<out.length;i++)bytes[i]=out.charCodeAt(i)&0xFF;
+    var blob=new Blob([bytes],{type:'application/pdf'});
+    var fname='Charges-Travaux-2044-'+annee+'.pdf';
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([blob],fname,{type:'application/pdf'})]})){
+      navigator.share({files:[new File([blob],fname,{type:'application/pdf'})],title:fname}).catch(function(){});
+    } else {
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=url;a.download=fname;
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+      setTimeout(function(){URL.revokeObjectURL(url);},2000);
+    }
+  } catch(e) { alert('Erreur PDF : '+e.message); }
+}
+
+// INIT
+load();
+renderAll();
+</script>
+</body>
+</html>
